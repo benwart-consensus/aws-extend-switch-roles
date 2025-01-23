@@ -1,21 +1,14 @@
-import { SessionMemory, SyncStorageRepository } from './lib/storage_repository.js'
+import { SessionMemory } from './lib/storage_repository.js'
 import { setIcon } from './lib/set_icon.js'
 import { externalConfigReceived } from './handlers/external.js'
 import { updateProfilesTable } from './handlers/update_profiles.js'
 
-const syncStorageRepo = new SyncStorageRepository(chrome || browser)
 const sessionMemory = new SessionMemory(chrome || browser)
 
 async function initScript() {
   await sessionMemory.set({ switchCount: 0 });
-
-  const { goldenKeyExpire } = await syncStorageRepo.get(['goldenKeyExpire']);
-  if ((new Date().getTime() / 1000) < Number(goldenKeyExpire)) {
-    await sessionMemory.set({ hasGoldenKey: 't' });
-    return setIcon('/icons/Icon_48x48_g.png');
-  } else {
-    await syncStorageRepo.set({ autoTabGrouping: false, signinEndpointInHere: false });
-  }
+  await sessionMemory.set({ hasGoldenKey: 't' });
+  return setIcon('/icons/Icon_48x48_g.png');
 }
 
 chrome.runtime.onStartup.addListener(function () {
@@ -30,7 +23,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
   const { reason } = details;
   if (reason === 'install' || reason === 'update') {
     const url = chrome.runtime.getURL('updated.html')
-    chrome.tabs.create({ url }, function(){});
+    chrome.tabs.create({ url }, function () { });
   }
   if (reason === 'update') {
     updateProfilesTable().catch(err => {
@@ -45,17 +38,17 @@ chrome.runtime.onMessageExternal.addListener(function (message, sender, sendResp
   if (!action || !dataType || !data) return;
 
   externalConfigReceived(action, dataType, data, sender.id)
-  .then(() => {
-    sendResponse({ result: 'success' });
-  })
-  .catch(err => {
-    setTimeout(() => {
-      sendResponse({
-        result: 'failure',
-        error: { message: err.message },
-      });
-    }, 1000); // delay to prevent to try scanning id
-  });
+    .then(() => {
+      sendResponse({ result: 'success' });
+    })
+    .catch(err => {
+      setTimeout(() => {
+        sendResponse({
+          result: 'failure',
+          error: { message: err.message },
+        });
+      }, 1000); // delay to prevent to try scanning id
+    });
 });
 
 function createTabGroupKey(title) {
@@ -71,12 +64,12 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       const result = await sessionMemory.get([key]);
       const { [key]: url } = result;
       if (url) {
-        await sessionMemory.delete([key]);
+        sessionMemory.delete([key]);
         const tab = await chrome.tabs.create({ url, active: false });
         setTimeout(() => {
           chrome.tabs.remove(tab.id);
         }, 1000);
-        console.info('Logout', group.title, url);
+        console.info('Logout', JSON.stringify(group.title), JSON.stringify(url));
       }
     });
     listeningTabGroupsRemove = true;

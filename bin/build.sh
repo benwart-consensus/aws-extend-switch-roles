@@ -11,10 +11,10 @@ popup=dist/chrome/js/popup.js
 background=dist/chrome/js/background.js
 supporters=dist/chrome/js/supporters.js
 
-rollup -c ./rollup.config.js src/js/options.js --file $options
-rollup -c ./rollup.config.js src/js/popup.js --file $popup
-rollup -c ./rollup.config.js src/js/background.js --file $background
-rollup -c ./rollup.config.js src/js/supporters.js --file $supporters
+npx rollup -c ./rollup.config.js src/js/options.js --file $options
+npx rollup -c ./rollup.config.js src/js/popup.js --file $popup
+npx rollup -c ./rollup.config.js src/js/background.js --file $background
+npx rollup -c ./rollup.config.js src/js/supporters.js --file $supporters
 
 \cp -f $options    dist/firefox/js/options.js
 \cp -f $popup      dist/firefox/js/popup.js
@@ -23,12 +23,12 @@ rollup -c ./rollup.config.js src/js/supporters.js --file $supporters
 
 bin/setup_manifest.mjs $1
 
-browsers=("chrome" "firefox")
-for brw in ${browsers[@]}
+browsers=("chrome")
+for brw in "${browsers[@]}"
 do
   \cp src/js/content.js dist/$brw/js/
   \cp -r src/js/war dist/$brw/js/
   \cp -r src/*.html dist/$brw/
-  \cp -r icons  dist/$brw/
+  \cp -r icons dist/$brw/
 done
 echo "build done"
