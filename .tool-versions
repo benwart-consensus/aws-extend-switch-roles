@@ -1,2 +1,6 @@
-nodejs 20.17.0
+<<<<<<< HEAD
+nodejs 25.2.1
 uv 0.9.6
+=======
+nodejs 22
+>>>>>>> upstream/main

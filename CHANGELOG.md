@@ -1,6 +1,15 @@
 Changelog
 =========
 
+## 6.0.3 (2025-11-17)
+
+- Fix an issue where role switching failed in AWS GovCloud and China region (thanks to @harveymonster)
+- Fix a potential internal storage corruption when configuration validation fails
+
+## 6.0.2 (2025/11/05)
+
+- Fix incorrect processing applied to iframes
+
 ## 6.0.1 (2025/10/30)
 
 - Resolve an issue where users could not switch in the updated AWS Management Console (thanks to @Optischa)
